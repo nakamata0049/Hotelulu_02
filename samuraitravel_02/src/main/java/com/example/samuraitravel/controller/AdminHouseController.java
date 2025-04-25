@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,10 +33,10 @@ public class AdminHouseController {
 		//Page<House> housePage = houseRepository.findAll(pageable); //民宿データをページ情報付きで取得
 		Page<House> housePage;
 
-		if (keyword != null && !keyword.isEmpty()) {	//keywordパラメータが存在するか
-			housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable);	//keywordで部分一致検索したデータを取得
+		if (keyword != null && !keyword.isEmpty()) { //keywordパラメータが存在するか
+			housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable); //keywordで部分一致検索したデータを取得
 		} else {
-			housePage = houseRepository.findAll(pageable);	//全データ取得
+			housePage = houseRepository.findAll(pageable); //全データ取得
 		}
 
 		//model.addAttribute("houses", houses); //index.htmlで"houses"という変数を使ったらhousesの中身を参照する
@@ -43,5 +44,14 @@ public class AdminHouseController {
 		model.addAttribute("keyword", keyword);
 
 		return "admin/houses/index";
+	}
+
+	@GetMapping("/{id}")
+	public String show(@PathVariable(name = "id") Integer id, Model model) { //@PathVariableでURLの一部("id")を引数(id)にバインドしている
+		House house = houseRepository.getReferenceById(id); //URLのidと一致する民宿データを取得
+
+		model.addAttribute("house", house);
+
+		return "/admin/houses/show";
 	}
 }
