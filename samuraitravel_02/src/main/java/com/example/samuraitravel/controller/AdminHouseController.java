@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.samuraitravel.entity.House;
 import com.example.samuraitravel.repository.HouseRepository;
@@ -23,13 +24,23 @@ public class AdminHouseController {
 
 	@GetMapping //RequestMappingで記述しているので("/admin/houses")が省略されている
 	//public String index(Model, model, Pageable pageable) {
+	//public String index(Model model,@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) { //ページネーションの設定を追加
 	public String index(Model model,
-			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) { //ページネーションの設定を追加
+			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
+			@RequestParam(name = "keyword", required = false) String keyword) {
 		//List<House> houses = houseRepository.findAll(); //findAll()ですべての民宿データを取得してhousesに格納している
-		Page<House> housePage = houseRepository.findAll(pageable); //民宿データをページ情報付きで取得
+		//Page<House> housePage = houseRepository.findAll(pageable); //民宿データをページ情報付きで取得
+		Page<House> housePage;
+
+		if (keyword != null && !keyword.isEmpty()) {	//keywordパラメータが存在するか
+			housePage = houseRepository.findByNameLike("%" + keyword + "%", pageable);	//keywordで部分一致検索したデータを取得
+		} else {
+			housePage = houseRepository.findAll(pageable);	//全データ取得
+		}
 
 		//model.addAttribute("houses", houses); //index.htmlで"houses"という変数を使ったらhousesの中身を参照する
 		model.addAttribute("housePage", housePage); //"housePage"という変数を使ったらhousePageの中身を参照する
+		model.addAttribute("keyword", keyword);
 
 		return "admin/houses/index";
 	}
