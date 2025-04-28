@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.samuraitravel.entity.House;
+import com.example.samuraitravel.form.HouseEditForm;
 import com.example.samuraitravel.form.HouseRegisterForm;
 import com.example.samuraitravel.repository.HouseRepository;
 import com.example.samuraitravel.service.HouseService;
@@ -52,7 +53,7 @@ public class AdminHouseController {
 		model.addAttribute("housePage", housePage); //"housePage"という変数を使ったらhousePageの中身を参照する
 		model.addAttribute("keyword", keyword);
 
-		return "admin/houses/index"; //index.htmlを表示する
+		return "admin/houses/index"; //index.htmlを返す
 	}
 
 	@GetMapping("/{id}") //	/admin/houses/{id}がリクエストされたら動く
@@ -61,14 +62,14 @@ public class AdminHouseController {
 
 		model.addAttribute("house", house);
 
-		return "/admin/houses/show"; //	show.htmlを表示する
+		return "/admin/houses/show"; //	show.htmlを返す
 	}
 
 	@GetMapping("/register") //	/admin/houses/registerがリクエストされたら動く
 	public String register(Model model) {
 		model.addAttribute("houseRegisterForm", new HouseRegisterForm());
 
-		return "admin/houses/register"; //register.htmlを表示する
+		return "admin/houses/register"; //register.htmlを返す
 	}
 
 	@PostMapping("/create") //	/admin/houses/createがリクエストされたら動く
@@ -83,5 +84,19 @@ public class AdminHouseController {
 		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。"); //リダイレクト先にsuccessMessageを渡す
 
 		return "redirect:/admin/houses"; //admin/houses.htmlをsuccessMessageとともに返す
+	}
+
+	@GetMapping("/{id}/edit") //	/admin/houses/{id}/editがリクエストされたら動く
+	public String edit(@PathVariable(name = "id") Integer id, Model model) { //{id}の位置にある値を取得
+		House house = houseRepository.getReferenceById(id); //idに該当する民宿データを取得
+		String imageName = house.getImageName(); //民宿画像のファイル名を取得する
+		HouseEditForm houseEditForm = new HouseEditForm(house.getId(), house.getName(), null, house.getDescription(),
+				house.getPrice(), house.getCapacity(), house.getPostalCode(), house.getAddress(),
+				house.getPhoneNumber()); //フォームクラスをインスタンス化する
+
+		model.addAttribute("imageName", imageName);//民宿画像のファイル名をビューに渡す
+		model.addAttribute("houseEditForm", houseEditForm); //生成したインスタンスをビューに渡す
+
+		return "admin/houses/edit"; //admin/houses/edit.htmlを返す
 	}
 }

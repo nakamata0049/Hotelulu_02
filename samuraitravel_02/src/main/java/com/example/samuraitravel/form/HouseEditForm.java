@@ -10,7 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor	//すべてのフィールドに値をセットするコンストラクタを自動生成する
+@AllArgsConstructor //すべてのフィールドに値をセットするコンストラクタを自動生成する
+							//フォームには初期値として更新前の値を表示したいため
 public class HouseEditForm {
 	@NotNull
 	private Integer id;
