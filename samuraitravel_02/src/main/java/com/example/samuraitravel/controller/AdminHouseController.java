@@ -80,10 +80,10 @@ public class AdminHouseController {
 			return "admin/houses/register";
 		}
 
-		houseService.create(houseRegisterForm);
+		houseService.create(houseRegisterForm); //createメソッドを呼び出す
 		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。"); //リダイレクト先にsuccessMessageを渡す
 
-		return "redirect:/admin/houses"; //admin/houses.htmlをsuccessMessageとともに返す
+		return "redirect:/admin/houses"; //admin/housesをsuccessMessageとともに返す
 	}
 
 	@GetMapping("/{id}/edit") //	/admin/houses/{id}/editがリクエストされたら動く
@@ -98,5 +98,19 @@ public class AdminHouseController {
 		model.addAttribute("houseEditForm", houseEditForm); //生成したインスタンスをビューに渡す
 
 		return "admin/houses/edit"; //admin/houses/edit.htmlを返す
+	}
+
+	@PostMapping("/{id}/update") //admin/houses/{id}/updateがリクエストされたら動く
+	public String update(@ModelAttribute @Validated HouseEditForm houseEditForm, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
+		//バリデーションの結果エラーがあったらedit.htmlを返す
+		if (bindingResult.hasErrors()) {
+			return "admin/houses/edit";
+		}
+
+		houseService.update(houseEditForm); //updateメソッドを呼び出す
+		redirectAttributes.addFlashAttribute("successMessage", "民宿情報を編集しました。"); //リダイレクト先にsuccessMessageを渡す
+
+		return "redirect:/admin/houses"; //admin/housesをsuccessMessageとともに返す
 	}
 }

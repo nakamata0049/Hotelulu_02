@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.samuraitravel.entity.House;
+import com.example.samuraitravel.form.HouseEditForm;
 import com.example.samuraitravel.form.HouseRegisterForm;
 import com.example.samuraitravel.repository.HouseRepository;
 
@@ -45,14 +46,37 @@ public class HouseService {
 		house.setAddress(houseRegisterForm.getAddress());
 		house.setPhoneNumber(houseRegisterForm.getPhoneNumber());
 
-		houseRepository.save(house);	//エンティティをデータベースに保存
+		houseRepository.save(house); //エンティティをデータベースに保存
+	}
+
+	@Transactional
+	public void update(HouseEditForm houseEditForm) {
+		House house = houseRepository.getReferenceById(houseEditForm.getId()); //エンティティをインスタンス化するのではなく、idを使って取得している
+		MultipartFile imageFile = houseEditForm.getImageFile();
+
+		if (!imageFile.isEmpty()) {
+			String imageName = imageFile.getOriginalFilename();
+			String hashedImageName = generateNewFileName(imageName);
+			Path filePath = Paths.get("src/main/resources/static/storage/" + hashedImageName);
+			copyImageFile(imageFile, filePath);
+			house.setImageName(hashedImageName);
+		}
+		house.setName(houseEditForm.getName());
+		house.setDescription(houseEditForm.getDescription());
+		house.setPrice(houseEditForm.getPrice());
+		house.setCapacity(houseEditForm.getCapacity());
+		house.setPostalCode(houseEditForm.getPostalCode());
+		house.setAddress(houseEditForm.getAddress());
+		house.setPhoneNumber(houseEditForm.getPhoneNumber());
+
+		houseRepository.save(house);
 	}
 
 	//UUIDを使って生成したファイル名を返す
 	public String generateNewFileName(String fileName) {
 		String[] fileNames = fileName.split("\\.");
 		for (int i = 0; i < fileNames.length - 1; i++) {
-			fileNames[i] = UUID.randomUUID().toString();	//(ほぼ)重複しない一意のID
+			fileNames[i] = UUID.randomUUID().toString(); //(ほぼ)重複しない一意のID
 		}
 		String hashedFileName = String.join(".", fileNames);
 		return hashedFileName;
