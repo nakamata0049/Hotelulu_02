@@ -6,22 +6,30 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.samuraitravel.entity.House;
 import com.example.samuraitravel.form.HouseRegisterForm;
 import com.example.samuraitravel.repository.HouseRepository;
+import com.example.samuraitravel.service.HouseService;
 
 @Controller
 @RequestMapping("/admin/houses") //https://ドメイン名/admin/housesにアクセスしたときに実行される
 public class AdminHouseController {
 	private final HouseRepository houseRepository;
+	private final HouseService houseService;
 
-	public AdminHouseController(HouseRepository houseRepository) {
+	public AdminHouseController(HouseRepository houseRepository, HouseService houseService) {
 		this.houseRepository = houseRepository;
+		this.houseService = houseService;
 	}
 
 	@GetMapping //RequestMappingで記述しているので("/admin/houses")が省略されている
@@ -44,22 +52,36 @@ public class AdminHouseController {
 		model.addAttribute("housePage", housePage); //"housePage"という変数を使ったらhousePageの中身を参照する
 		model.addAttribute("keyword", keyword);
 
-		return "admin/houses/index";
+		return "admin/houses/index"; //index.htmlを表示する
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/{id}") //	/admin/houses/{id}がリクエストされたら動く
 	public String show(@PathVariable(name = "id") Integer id, Model model) { //@PathVariableでURLの一部("id")を引数(id)にバインドしている
 		House house = houseRepository.getReferenceById(id); //URLのidと一致する民宿データを取得
 
 		model.addAttribute("house", house);
 
-		return "/admin/houses/show";
+		return "/admin/houses/show"; //	show.htmlを表示する
 	}
 
-	@GetMapping("/register")
+	@GetMapping("/register") //	/admin/houses/registerがリクエストされたら動く
 	public String register(Model model) {
 		model.addAttribute("houseRegisterForm", new HouseRegisterForm());
-		
-		return "admin/houses/register";
+
+		return "admin/houses/register"; //register.htmlを表示する
+	}
+
+	@PostMapping("/create") //	/admin/houses/createがリクエストされたら動く
+	public String create(@ModelAttribute @Validated HouseRegisterForm houseRegisterForm, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) { //@ModelAttributeによりフォームから送信されたデータをバインドする
+		//バリデーションの結果エラーがあったらregister.htmlを返す
+		if (bindingResult.hasErrors()) {
+			return "admin/houses/register";
+		}
+
+		houseService.create(houseRegisterForm);
+		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。"); //リダイレクト先にsuccessMessageを渡す
+
+		return "redirect:/admin/houses"; //admin/houses.htmlをsuccessMessageとともに返す
 	}
 }
