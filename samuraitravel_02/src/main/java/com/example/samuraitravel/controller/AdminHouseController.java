@@ -83,7 +83,7 @@ public class AdminHouseController {
 		houseService.create(houseRegisterForm); //createメソッドを呼び出す
 		redirectAttributes.addFlashAttribute("successMessage", "民宿を登録しました。"); //リダイレクト先にsuccessMessageを渡す
 
-		return "redirect:/admin/houses"; //admin/housesをsuccessMessageとともに返す
+		return "redirect:/admin/houses"; //successMessageとともにadmin/housesを返す
 	}
 
 	@GetMapping("/{id}/edit") //	/admin/houses/{id}/editがリクエストされたら動く
@@ -111,6 +111,15 @@ public class AdminHouseController {
 		houseService.update(houseEditForm); //updateメソッドを呼び出す
 		redirectAttributes.addFlashAttribute("successMessage", "民宿情報を編集しました。"); //リダイレクト先にsuccessMessageを渡す
 
-		return "redirect:/admin/houses"; //admin/housesをsuccessMessageとともに返す
+		return "redirect:/admin/houses"; //successMessageとともにadmin/housesを返す
+	}
+
+	@PostMapping("/{id}/delete") //admin/houses/{id}/deleteがリクエストされたら動く
+	public String delete(@PathVariable(name = "id") Integer id, RedirectAttributes redirectAttributes) {
+		houseRepository.deleteById(id); //idに該当するデータをデータベースから削除
+
+		redirectAttributes.addFlashAttribute("successMessage", "民宿を削除しました。"); //リダイレクト先にsuccessMessageを渡す
+
+		return "redirect:/admin/houses"; //successMessageとともに/admin/housesを返す
 	}
 }
