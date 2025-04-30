@@ -34,22 +34,25 @@
 					<img class="samuraitravel-logo me-1" th:src="@{/images/logo.png}" alt="SAMURAI Travel">
 				</a>
 
-				<botton class="navbar-toggler" type="button" data-bs-toggle="collapse"
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 					data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
 					aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
-				</botton>
+				</button>
 
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav ms-auto">
-						<!--未ログイン状態であれば表示する-->
+						<!--未ログインであれば表示する-->
 						<li class="nav-item" sec:authorize="isAnonymous()">
 							<a class="nav-link" th:href="@{/login}">ログイン</a>
+						</li>
+						<li class="nav-item" sec:authorize="isAnonymous()">
+							<a class="nav-link" th:href="@{/signup}">会員登録</a>
 						</li>
 
 						<!--ログイン済みであれば表示する-->
 						<li class="nav-item dropdown" sec:authorize="hasRole('ROLE_GENERAL')">
-							<a id="nabvarDropdownGeneral" class="nav-link dropdown-toggle" href="#" role="button"
+							<a id="navbarDropdownGeneral" class="nav-link dropdown-toggle" href="#" role="button"
 								data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
 								<span sec:authentication="principal.user.name"></span>
 							</a>
@@ -66,7 +69,7 @@
 						<!--管理者であれば表示する-->
 						<li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
 							<a id="navbarDropdownAdmin" class="nav-link dropdown-toggle" href="#" role="button"
-								data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-rep>
+								data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
 								管理者メニュー
 							</a>
 
