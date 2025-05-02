@@ -6,6 +6,9 @@
 
 	<div th:replace="~{fragment :: styles}"></div>
 
+	<!--FlatPickr-->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 	<title>民宿詳細</title>
 </head>
 
@@ -172,6 +175,11 @@
 	</div>
 
 	<div th:replace="~{fragment :: scripts}"></div>
+
+	<!--Flatpickr-->
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/110n/ja.js"></script>
+	<script th:src="@{/js/flatpickr.js}"></script>
 
 </body>
 
